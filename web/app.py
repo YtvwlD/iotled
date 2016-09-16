@@ -66,14 +66,14 @@ class App():
 	def on_api_raspi_poll(self, request, hostname):
 		try:
 			client = self._get_client(hostname)
-			command = client["commands"].pop()
-			self._save_client(client)
-			print("Sending command {0} to client {1}...".format(command, hostname))
-			if command:
+			try:
+				command = client["commands"].pop()
+				self._save_client(client)
+				print("Sending command {0} to client {1}...".format(command, hostname))
 				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
-			else:
+			except IndexError:
 				return Response(status=204)
-		except KeyError:
+		except TypeError:
 			return Response(status=404)
 
 	def _get_client(self, hostname):
