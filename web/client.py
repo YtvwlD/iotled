@@ -32,5 +32,5 @@ class Client():
 			command = self.commands.pop()
 			return jsonenc.encode(command)
 		except IndexError:
-			sleep(60)
+			sleep(5)
 			return ""
