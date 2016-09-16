@@ -22,11 +22,10 @@ import os
 
 from app import App
 
-def create_app():
-	app = App()
-	return SharedDataMiddleware(app.wsgi_app, {
-		"/static": os.path.join(os.path.dirname(__file__), "static")
-	})
+app = App()
+app = SharedDataMiddleware(app.wsgi_app, {
+	"/static": os.path.join(os.path.dirname(__file__), "static")
+})
 
 if __name__ == "__main__":
-	run_simple('127.0.0.1', 5000, create_app(), use_debugger=True, use_reloader=True)
+	run_simple('127.0.0.1', 5000, app, use_debugger=True, use_reloader=True)
