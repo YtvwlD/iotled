@@ -16,17 +16,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+print ("IoT for LEDs  Copyright (C) 2016  Niklas Sombert")
+print ("This program comes with ABSOLUTELY NO WARRANTY.")
+print ("This is free software, and you are welcome to redistribute it")
+print ("under certain conditions.")
+
 from time import sleep
 
 import gpio
 import poweroff
 from client import Client
 
+print ("Preparing GPIO...")
 gpio.setup()
 gpio.setup_push_callback("POWER", poweroff.poweroff)
+print ("Connecting to the cloud...")
 client = Client()
 client.connect(list(gpio.PORTS["LED"]))
-
+print ("Connection established.")
 while True:
+	print ("Polling...")
 	print(client.poll())
 	sleep(10)
