@@ -82,7 +82,7 @@ class App():
 			return Response(jsonenc.encode(client["leds"]), mimetype="text/json")
 		if request.method == "POST":
 			command = request.form["command"]
-			params = jsonenc.decode(request.form["params"])
+			params = jsondec.decode(request.form["params"])
 			client.commands.append({"command": command, "params": params})
 			self._save_client(client)
 			return Response(status_code=202)
