@@ -25,7 +25,7 @@ PORTS = {
 }
 
 def setup():
-	GPIO.setMode(GPIO.BCM)
+	GPIO.setmode(GPIO.BCM)
 
 	for led in PORTS["LED"]:
 		GPIO.setup(PORTS["LED"][led], GPIO.out)
