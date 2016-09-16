@@ -67,6 +67,7 @@ class App():
 		try:
 			client = jsondec.decode(self.redis.get("iotled-client: " + hostname))
 			command = client["commands"].pop()
+			self.redit.set("iotled-client: " + hostname, jsonenc.encode(client))
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			if command:
 				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
