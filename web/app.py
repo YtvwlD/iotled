@@ -58,6 +58,7 @@ class App():
 		for client in self.clients:
 			if client.hostname == hostname:
 				self.clients.remove(client)
+		print ("Client {} has subscribed.".format(hostname))
 		client = Client(hostname, leds, state)
 		self.clients.append(client)
 		client.commands.append({"command": "hello"})
@@ -68,6 +69,7 @@ class App():
 		for client in self.clients:
 			if client.hostname == hostname:
 				command = client.getCommand()
+				print("Sending command {} to client {}...".format(command, hostname))
 				if command:
 					return Response(command, mimetype="text/json", status=200)
 				else:
