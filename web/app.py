@@ -68,7 +68,7 @@ class App():
 			client = self._get_client(hostname)
 			try:
 				command = client["commands"].pop()
-				self._save_client(client)
+				self._save_client(hostname, client)
 				print("Sending command {0} to client {1}...".format(command, hostname))
 				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
 			except IndexError:
