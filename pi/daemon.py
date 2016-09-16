@@ -18,5 +18,11 @@
 
 from time import sleep
 
+import gpio
+import poweroff
+
+gpio.setup()
+gpio.setup_push_callback("POWER", poweroff.poweroff)
+
 while True:
 	sleep (100000000000000)
