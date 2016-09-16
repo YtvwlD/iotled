@@ -52,9 +52,9 @@ class App():
 		return self.render_template('home.html')
 
 	def on_api_raspi_subscribe(self, request):
-		#assert request.method == "POST"
-		hostname = request.args.get("hostname")
-		leds = request.args.get("leds")
+		assert request.method == "POST"
+		hostname = request.form["hostname"]
+		leds = request.form["leds"]
 		for client in self.clients:
 			if client.hostname == hostname:
 				self.clients.remove(client)
