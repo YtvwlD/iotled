@@ -25,6 +25,7 @@ jsonenc = JSONEncoder()
 class Client():
 	def connect(self, leds):
 		self.hostname = node()
+		self.leds = leds
 		requests.post("https://iotled.ytvwld.de/api/raspi/subscribe", data={
 			"hostname": self.hostname,
 			"leds": jsonenc.encode(leds)
@@ -32,6 +33,9 @@ class Client():
 
 	def poll(self):
 		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll", data={"hostname": self.hostname})
+		if req.status_code == 404:
+			self.connect(self.leds)
+			return
 		txt = req.text
 		if txt:
 			dec = jsondec.decode(req.text)
