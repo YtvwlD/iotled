@@ -32,7 +32,7 @@ class Client():
 		})
 
 	def poll(self):
-		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll", data={"hostname": self.hostname})
+		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll/{}".format(self.hostname))
 		if req.status_code == 404:
 			raise ConnectionLost
 		if req.status_code == 204:

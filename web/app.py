@@ -30,11 +30,11 @@ class App():
 			Rule("/setup", endpoint="setup"),
 			Rule("/manage", endpoint="manage"),
 			Rule("/api/raspi/subscribe", endpoint="api_raspi_subscribe"),
-			Rule("/api/raspi/poll", endpoint="api_raspi_poll"),
+			Rule("/api/raspi/poll/<hostname>", endpoint="api_raspi_poll"),
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
-		self.clients = []
+		self.clients = {}
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
@@ -55,26 +55,25 @@ class App():
 		assert request.method == "POST"
 		hostname = request.form["hostname"]
 		leds = request.form["leds"]
-		for client in self.clients:
-			if client.hostname == hostname:
-				self.clients.remove(client)
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = Client(hostname, leds)
-		self.clients.append(client)
-		client.commands.append({"command": "hello"})
+		self.clients[hostname] = client
+		client.commands.append({"command": "hello", "params": []})
+		print("Client: {0}".format(self.clients))
 		return Response(status=201)
 
-	def on_api_raspi_poll(self, request):
-		hostname = request.args.get("hostname")
-		for client in self.clients:
-			if client.hostname == hostname:
-				command = client.getCommand()
-				print("Sending command {0} to client {1}...".format(command, hostname))
-				if command:
-					return Response(command, mimetype="text/json", status=200)
-				else:
-					return Response(status=204)
-		return Response(status=404)
+	def on_api_raspi_poll(self, request, hostname):
+		print("Client: {0}".format(self.clients))
+		try:
+			client = self.clients[hostname]
+			command = client.getCommand()
+			print("Sending command {0} to client {1}...".format(command, hostname))
+			if command:
+				return Response(command, mimetype="text/json", status=200)
+			else:
+				return Response(status=204)
+		except KeyError:
+			return Response(status=404)
 
 	def render_template(self, template_name, **context):
 		t = self.jinja_env.get_template(template_name)
