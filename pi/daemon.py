@@ -38,7 +38,13 @@ while True:
 		print ("Connection established.")
 		while True:
 			print ("Polling...")
-			print(client.poll())
+			cmd_param = client.poll()
+			print(cmd_param)
+			if cmd_param[0] == "turn_on":
+				gpio.turn_on(cmd_param[1][0])
+			if cmd_param[0] == "turn_off":
+				gpio.turn_off(cmd_param[1][0])
+
 	except ConnectionLost:
 		print ("Connection lost.")
 		continue
