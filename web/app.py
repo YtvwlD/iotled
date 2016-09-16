@@ -21,6 +21,9 @@ from werkzeug.utils import redirect
 from jinja2 import Environment, FileSystemLoader
 import os
 import redis
+from json import JSONDecoder
+
+jsondec = JSONDecoder()
 
 class App():
 	def __init__(self):
@@ -61,7 +64,7 @@ class App():
 
 	def on_api_raspi_poll(self, request, hostname):
 		try:
-			client = self.redis.get("iotled-client: " + hostname)
+			client = jsondec.decode(self.redis.get("iotled-client: " + hostname))
 			command = client["commands"].pop()
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			if command:
