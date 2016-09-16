@@ -35,7 +35,7 @@ class App():
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
-		self.redis = redis.Redis(unix_socket_path="/home/ytvwld/.redis/sock")
+		self.redis = redis.Redis(unix_socket_path="/home/ytvwld/.redis/sock", password=os.environ["REDIS_AUTH"])
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
