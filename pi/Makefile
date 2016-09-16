@@ -3,7 +3,7 @@ install:
 	cp *.py /usr/lib/iotled
 	cp iotled.service /lib/systemd/system/
 	cd /lib/systemd/system/multi-user.target.wants
-	ln -s iotled.service ../iotled.service
+	ln -s ../iotled.service iotled.service
 
 uninstall:
 	rm -rf /usr/lib/iotled
