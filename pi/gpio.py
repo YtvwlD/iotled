@@ -20,7 +20,8 @@ PORTS = {
 	"LED": {
 		"BLUE": 3,
 		"GREEN": 4,
-		"RED": 14
+		"RED": 14,
+		"YELLOW": 17
 	},
 	"BUTTON": {
 		"POWER": 15
