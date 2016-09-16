@@ -31,7 +31,11 @@ class Client():
 
 	def poll(self):
 		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll", data={"hostname": self.hostname})
-		dec = jsondec.decode(req.text)
-		command = dec["command"]
-		params = dec["params"]
-		return command, params
+		txt = req.text
+		if txt:
+			dec = jsondec.decode(req.text)
+			command = dec["command"]
+			params = dec["params"]
+			return command, params
+		else:
+			sleep(10)
