@@ -69,7 +69,7 @@ class App():
 			command = client["commands"].pop()
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			if command:
-				return Response(command, mimetype="text/json", status=200)
+				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
 			else:
 				return Response(status=204)
 		except KeyError:
