@@ -25,7 +25,7 @@ from time import sleep
 
 import gpio
 import poweroff
-from client import Client
+from client import Client, ConnectionLost
 
 print ("Preparing GPIO...")
 gpio.setup()
