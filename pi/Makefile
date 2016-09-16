@@ -2,7 +2,8 @@ install:
 	mkdir -p /usr/lib/iotled
 	cp *.py /usr/lib/iotled
 	cp iotled.service /lib/systemd/system/
-	sh -c "cd /lib/systemd/system/multi-user.target.wants && ln -s ../iotled.service iotled.service"
+	systemctl daemon-reload
+	systemctl enable --now iotled.service
 
 uninstall:
 	rm -rf /usr/lib/iotled
