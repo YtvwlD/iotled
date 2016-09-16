@@ -60,14 +60,14 @@ class App():
 		leds = request.form["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
-		self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
+		self._save_client(hostname, client)
 		return Response(status=201)
 
 	def on_api_raspi_poll(self, request, hostname):
 		try:
-			client = jsondec.decode(self.redis.get("iotled-client: " + hostname))
+			client = self._get_client(hostname)
 			command = client["commands"].pop()
-			self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
+			self._save_client(client)
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			if command:
 				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
@@ -75,6 +75,12 @@ class App():
 				return Response(status=204)
 		except KeyError:
 			return Response(status=404)
+
+	def _get_client(self, hostname):
+		return jsondec.decode(self.redis.get("iotled-client: " + hostname))
+
+	def _save_client(self, hostname, client):
+		self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
 
 	def render_template(self, template_name, **context):
 		t = self.jinja_env.get_template(template_name)
