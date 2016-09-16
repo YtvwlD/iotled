@@ -22,8 +22,6 @@ from jinja2 import Environment, FileSystemLoader
 import os
 import redis
 
-from client import Client
-
 class App():
 	def __init__(self):
 		self.url_map = Map([
@@ -57,15 +55,14 @@ class App():
 		hostname = request.form["hostname"]
 		leds = request.form["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
-		client = Client(hostname, leds)
-		self.redis.set("iotled-client: " + hostname, client.toRedis())
-		client.commands.append({"command": "hello", "params": []})
+		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
+		self.redis.set("iotled-client: " + hostname, client)
 		return Response(status=201)
 
 	def on_api_raspi_poll(self, request, hostname):
 		try:
-			client = Client.fromRedis(self.redis.get("iotled-client: " + hostname))
-			command = client.getCommand()
+			client = self.redis.get("iotled-client: " + hostname))
+			command = client["commands"].pop()
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			if command:
 				return Response(command, mimetype="text/json", status=200)
