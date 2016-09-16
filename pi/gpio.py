@@ -21,6 +21,9 @@ PORTS = {
 		"BLUE": 3,
 		"GREEN": 4,
 		"RED": 14
+	},
+	"BUTTON": {
+		"POWER": 15
 	}
 }
 
@@ -30,8 +33,14 @@ def setup():
 	for led in PORTS["LED"]:
 		GPIO.setup(PORTS["LED"][led], GPIO.OUT)
 
+	for button in PORTS["BUTTON"]:
+		GPIO.setup(PORTS["BUTTON"][button], GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+
 def turn_on(led):
 	GPIO.output(PORTS["LED"][led], GPIO.HIGH)
 
 def turn_off(led):
 	GPIO.output(PORTS["LED"][led], GPIO.LOW)
+
+def setup_push_callback(button, func):
+	GPIO.add_event_detect(PORTS["BUTTON"][button], GPIO.RISING, callback=lambda channel: func())
