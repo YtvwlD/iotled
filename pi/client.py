@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # IoT for LEDs
 # Copyright (C) 2016  Niklas Sombert
 #
@@ -16,17 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from time import sleep
+import requests
+from platform import node
+from json import JSONDecoder, JSONEncoder
 
-import gpio
-import poweroff
-from client import Client
+jsondec = JSONDecoder()
+jsonenc = JSONEncoder()
 
-gpio.setup()
-gpio.setup_push_callback("POWER", poweroff.poweroff)
-client = Client()
-client.connect(list(gpio.PORTS["LED"]))
+class Client():
+	def connect(self, leds):
+		self.hostname = node()
+		requests.post("https://iotled.ytvwld.de/api/raspi/subscribe", data={
+			"hostname": self.hostname,
+			"leds": jsonenc.encode(leds)
+		})
 
-while True:
-	print(client.poll())
-	sleep(10)
+	def poll(self):
+		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll", data={"hostname": self.hostname})
+		dec = jsondec.decode(req.text)
+		command = dec["command"]
+		params = dec["params"]
+		return command, params
