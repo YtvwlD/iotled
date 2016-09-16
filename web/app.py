@@ -20,6 +20,7 @@ from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.utils import redirect
 from jinja2 import Environment, FileSystemLoader
 import os
+import redis
 
 from client import Client
 
@@ -34,7 +35,7 @@ class App():
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
-		self.clients = {}
+		self.redis = redis.Redis(unix_socket_path="/home/ytvwld/.redis/sock")
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
@@ -57,15 +58,13 @@ class App():
 		leds = request.form["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = Client(hostname, leds)
-		self.clients[hostname] = client
+		self.redis.set("iotled-client: " + hostname, client.toRedis())
 		client.commands.append({"command": "hello", "params": []})
-		print("Client: {0}".format(self.clients))
 		return Response(status=201)
 
 	def on_api_raspi_poll(self, request, hostname):
-		print("Client: {0}".format(self.clients))
 		try:
-			client = self.clients[hostname]
+			client = Client.fromRedis(self.redis.get("iotled-client: " + hostname))
 			command = client.getCommand()
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			if command:

@@ -34,3 +34,16 @@ class Client():
 		except IndexError:
 			sleep(5)
 			return ""
+
+	def toRedis(self):
+		return jsonenc.encode({
+			"hostname": self.hostname,
+			"leds": self.leds,
+			"commands": self.commands
+		})
+
+	def fromRedis(data):
+		j = jsondec.decode(data)
+		c = Client(j["hostname"], j["leds"])
+		c.commands = j["commands"]
+		return c
