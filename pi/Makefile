@@ -3,7 +3,8 @@ install:
 	cp *.py /usr/lib/iotled
 	cp iotled.service /lib/systemd/system/
 	systemctl daemon-reload
-	systemctl enable --now iotled.service
+	systemctl enable iotled.service
+	systemctl start iotled.service
 
 uninstall:
 	rm -rf /usr/lib/iotled
