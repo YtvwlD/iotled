@@ -59,7 +59,7 @@ class App():
 			if client.hostname == hostname:
 				self.clients.remove(client)
 		print ("Client {0} has subscribed.".format(hostname))
-		client = Client(hostname, leds, state)
+		client = Client(hostname, leds)
 		self.clients.append(client)
 		client.commands.append({"command": "hello"})
 		return Response(status=201)
