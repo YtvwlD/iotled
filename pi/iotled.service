@@ -1,0 +1,7 @@
+[Unit]
+Description=IoT for LEDs (client)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/iotled/daemon.py
