@@ -85,7 +85,7 @@ class App():
 			params = jsondec.decode(request.form["params"])
 			client["commands"].append({"command": command, "params": params})
 			self._save_client(device, client)
-			return Response(status_code=202)
+			return Response(status=202)
 
 	def _get_client(self, hostname):
 		return jsondec.decode(self.redis.get("iotled-client: " + hostname))
