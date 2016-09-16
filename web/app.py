@@ -76,6 +76,17 @@ class App():
 		except TypeError:
 			return Response(status=404)
 
+	def on_api_app_manage(self, request, device):
+		client = self._get_client(device)
+		if request.method == "GET":
+			return Response(jsonenc.encode(client["leds"]), mimetype="text/json")
+		if request.method == "POST":
+			command = request.form["command"]
+			params = jsonenc.decode(request.form["params"])
+			client.commands.append({"command": command, "params": params})
+			self._save_client(client)
+			return Response(status_code=202)
+
 	def _get_client(self, hostname):
 		return jsondec.decode(self.redis.get("iotled-client: " + hostname))
 
