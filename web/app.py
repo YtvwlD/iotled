@@ -18,6 +18,8 @@ from werkzeug.wrappers import Request, Response
 from werkzeug.routing import Map, Rule
 from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.utils import redirect
+from jinja2 import Environment, FileSystemLoader
+import os
 
 class App():
 	def __init__(self):
@@ -29,6 +31,9 @@ class App():
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
+		template_path = os.path.join(os.path.dirname(__file__), 'templates')
+		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
+			autoescape=True)
 
 	@Request.application
 	def dispatch_request(self, request):
@@ -40,7 +45,12 @@ class App():
 			return e
 
 	def on_home(self, request):
-		return Response("Hello World!")
+		return self.render_template('home.html')
+
+	def render_template(self, template_name, **context):
+		t = self.jinja_env.get_template(template_name)
+		return Response(t.render(context), mimetype='text/html')
+
 
 	def wsgi_app(self, environ, start_response):
 		return self.dispatch_request(environ, start_response)
