@@ -21,9 +21,10 @@ from werkzeug.utils import redirect
 from jinja2 import Environment, FileSystemLoader
 import os
 import redis
-from json import JSONDecoder
+from json import JSONDecoder, JSONEncoder
 
 jsondec = JSONDecoder()
+jsonenc = JSONEncoder()
 
 class App():
 	def __init__(self):
@@ -59,7 +60,7 @@ class App():
 		leds = request.form["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
-		self.redis.set("iotled-client: " + hostname, client)
+		self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
 		return Response(status=201)
 
 	def on_api_raspi_poll(self, request, hostname):
