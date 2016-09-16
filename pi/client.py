@@ -34,13 +34,16 @@ class Client():
 	def poll(self):
 		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll", data={"hostname": self.hostname})
 		if req.status_code == 404:
-			self.connect(self.leds)
-			return
-		txt = req.text
-		if txt:
-			dec = jsondec.decode(req.text)
-			command = dec["command"]
-			params = dec["params"]
-			return command, params
-		else:
+			raise ConnectionLost
+		if req.status_code == 204:
 			sleep(10)
+			return
+		assert req.status_code == 200
+		txt = req.text
+		dec = jsondec.decode(req.text)
+		command = dec["command"]
+		params = dec["params"]
+		return command, params
+
+class ConnectionLost(Exception):
+	pass

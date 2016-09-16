@@ -30,11 +30,15 @@ from client import Client
 print ("Preparing GPIO...")
 gpio.setup()
 gpio.setup_push_callback("POWER", poweroff.poweroff)
-print ("Connecting to the cloud...")
-client = Client()
-client.connect(list(gpio.PORTS["LED"]))
-print ("Connection established.")
 while True:
-	print ("Polling...")
-	print(client.poll())
-	sleep(10)
+	try:
+		print ("Connecting to the cloud...")
+		client = Client()
+		client.connect(list(gpio.PORTS["LED"]))
+		print ("Connection established.")
+		while True:
+			print ("Polling...")
+			print(client.poll())
+	except ConnectionLost:
+		print ("Connection lost.")
+		continue
