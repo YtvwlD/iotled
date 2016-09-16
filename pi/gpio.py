@@ -18,7 +18,9 @@ from RPi import GPIO
 
 PORTS = {
 	"LED": {
-		"BLUE": 3
+		"BLUE": 3,
+		"GREEN": 4,
+		"RED": 14
 	}
 }
 
