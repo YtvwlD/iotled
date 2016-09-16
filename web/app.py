@@ -21,16 +21,20 @@ from werkzeug.utils import redirect
 from jinja2 import Environment, FileSystemLoader
 import os
 
+from client import Client
+
 class App():
 	def __init__(self):
 		self.url_map = Map([
 			Rule("/", endpoint="home"),
 			Rule("/setup", endpoint="setup"),
 			Rule("/manage", endpoint="manage"),
-			Rule("/api/raspi/subscribe", endpoint="api_raspi"),
+			Rule("/api/raspi/subscribe", endpoint="api_raspi_subscribe"),
+			Rule("/api/raspi/poll", endpoint="api_raspi_poll"),
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
+		self.clients = []
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
@@ -46,6 +50,29 @@ class App():
 
 	def on_home(self, request):
 		return self.render_template('home.html')
+
+	def on_api_raspi_subscribe(self, request):
+		#assert request.method == "POST"
+		hostname = request.args.get("hostname")
+		leds = request.args.get("leds")
+		for client in self.clients:
+			if client.hostname == hostname:
+				self.clients.remove(client)
+		client = Client(hostname, leds, state)
+		self.clients.append(client)
+		client.commands.append({"command": "hello"})
+		return Response(status=201)
+
+	def on_api_raspi_poll(self, request):
+		hostname = request.args.get("hostname")
+		for client in self.clients:
+			if client.hostname == hostname:
+				command = client.getCommand()
+				if command:
+					return Response(command, mimetype="text/json", status=200)
+				else:
+					return Response(status=204)
+		return Response(status=404)
 
 	def render_template(self, template_name, **context):
 		t = self.jinja_env.get_template(template_name)
