@@ -36,7 +36,7 @@ class Client():
 		if req.status_code == 404:
 			raise ConnectionLost
 		if req.status_code == 204:
-			sleep(10)
+			sleep(2)
 			return
 		assert req.status_code == 200
 		txt = req.text
