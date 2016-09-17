@@ -56,7 +56,7 @@ function turnOff(device, led)
 		type: "POST",
 		data: {
 			command: "turn_off",
-			params: '["' + led '"]'
+			params: '["' + led + '"]'
 		},
 		error: handleError
 	});
