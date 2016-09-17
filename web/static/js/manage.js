@@ -22,13 +22,13 @@ function listDevices()
 						var ledField = $("<ul></ul>");
 						json.forEach(function(led)
 						{
-							ledField.appendTo(
+							ledField.append(
 								$("<li></li>")
-								.appendTo(
+								.append(
 									$("<span></span>")
 									.html(led)
 								)
-								.appendTo(
+								.append(
 									$("<button></button>")
 										.addClass("btn")
 										.addClass("btn-default")
@@ -38,7 +38,7 @@ function listDevices()
 											turnOn(device, led);
 										})
 								)
-								.appendTo(
+								.append(
 									$("<button></button>")
 										.addClass("btn")
 										.addClass("btn-default")
@@ -55,7 +55,7 @@ function listDevices()
 								.html(device)
 							)
 							.append($("<td></td>")
-								.appendTo(ledField)
+								.append(ledField)
 							)
 							.appendTo("#devices-list");
 					},
