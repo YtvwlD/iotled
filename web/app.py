@@ -105,6 +105,7 @@ class App():
 		return jsondec.decode(self.redis.get("iotled-client: " + hostname))
 
 	def _save_client(self, hostname, client):
+		print("Saving client: {0} {1}".format(hostname, client))
 		self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
 
 	def _get_clients(self):
