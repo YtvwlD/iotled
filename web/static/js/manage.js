@@ -12,7 +12,7 @@ function listDevices()
 		{
 			json.forEach(function(device)
 			{
-				devices.append(device);
+				devices.push(device);
 				$("<tr></tr>")
 					.append($("<td></td>")
 						.html(device)
