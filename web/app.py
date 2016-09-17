@@ -61,7 +61,7 @@ class App():
 	def on_api_raspi_subscribe(self, request):
 		assert request.method == "POST"
 		hostname = request.form["hostname"]
-		leds = request.form["leds"]
+		leds = jsondec.decode(request.form["leds"])
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
 		self._save_client(hostname, client)
