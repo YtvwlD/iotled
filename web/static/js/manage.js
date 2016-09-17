@@ -13,21 +13,35 @@ function listDevices()
 			json.forEach(function(device)
 			{
 				devices.push(device);
-				$("<tr></tr>")
-					.append($("<td></td>")
-						.html(device)
-					)
-					.appendTo("#devices-list");
+				$.ajax({
+					url: "/api/app/" + device,
+					type: "GET",
+					dataType: "json",
+					success: function(json)
+					{
+						$("<tr></tr>")
+							.append($("<td></td>")
+								.html(device)
+							)
+							.append($("<td></td>")
+								.html(json)
+							)
+							.appendTo("#devices-list");
+					},
+					error: handleError
+				});
 			});
 		},
-		error: function(xhr, status, errorThrown)
-		{
-			alert("Sorry, there was a problem.");
-			console.log("Error: " + errorThrown);
-			console.log("Status: " + status);
-			console.dir(xhr);
-		}
+		error: handleError
 	});
+}
+
+function handleError(xhr, status, errorThrown)
+{
+	alert("Sorry, there was a problem.");
+	console.log("Error: " + errorThrown);
+	console.log("Status: " + status);
+	console.dir(xhr);
 }
 
 listDevices();
