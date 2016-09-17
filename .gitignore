@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+#Android
+app/.gradle/
+app/local.properties
+app/build/
