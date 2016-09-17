@@ -36,6 +36,32 @@ function listDevices()
 	});
 }
 
+function turnOn(device, led)
+{
+	$.ajax({
+		url: "/api/app/" + device,
+		type: "POST",
+		data: {
+			command: "turn_on",
+			params: [led]
+		},
+		error: handleError
+	});
+}
+
+function turnOff(device, led)
+{
+	$.ajax({
+		url: "/api/app/" + device,
+		type: "POST",
+		data: {
+			command: "turn_off",
+			params: [led]
+		},
+		error: handleError
+	});
+}
+
 function handleError(xhr, status, errorThrown)
 {
 	alert("Sorry, there was a problem.");
