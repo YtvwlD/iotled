@@ -25,10 +25,6 @@ function listDevices()
 							ledField.append(
 								$("<li></li>")
 								.append(
-									$("<span></span>")
-									.html(led)
-								)
-								.append(
 									$("<button></button>")
 										.addClass("btn")
 										.addClass("btn-default")
@@ -47,6 +43,10 @@ function listDevices()
 										{
 											turnOff(device, led);
 										})
+								)
+								.append(
+									$("<span></span>")
+									.html(led)
 								)
 							);
 						});
