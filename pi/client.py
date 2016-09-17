@@ -17,7 +17,6 @@
 import requests
 from platform import node
 from json import JSONDecoder, JSONEncoder
-from time import sleep
 
 jsondec = JSONDecoder()
 jsonenc = JSONEncoder()
@@ -36,7 +35,6 @@ class Client():
 		if req.status_code == 404:
 			raise ConnectionLost
 		if req.status_code == 204:
-			sleep(0.5)
 			return
 		assert req.status_code == 200
 		txt = req.text
