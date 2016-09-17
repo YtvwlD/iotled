@@ -38,6 +38,7 @@ class App():
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
 		self.redis = redis.Redis(unix_socket_path="/home/ytvwld/.redis/sock", password=os.environ["REDIS_AUTH"])
+		self._save_clients([])
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
@@ -54,6 +55,9 @@ class App():
 	def on_home(self, request):
 		return self.render_template('home.html')
 
+	def on_manage(self, request):
+		return self.render_template('manage.html')
+
 	def on_api_raspi_subscribe(self, request):
 		assert request.method == "POST"
 		hostname = request.form["hostname"]
@@ -61,6 +65,9 @@ class App():
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
 		self._save_client(hostname, client)
+		clients = self._get_clients()
+		clients.append(hostname)
+		self._save_clients(clients)
 		return Response(status=201)
 
 	def on_api_raspi_poll(self, request, hostname):
@@ -75,6 +82,10 @@ class App():
 				return Response(status=204)
 		except TypeError:
 			return Response(status=404)
+
+	def on_api_app_list(self, request):
+		clients = self._get_clients()
+		return Response(jsonenc.encode(clients), mimetype="text/json")
 
 	def on_api_app_manage(self, request, device):
 		client = self._get_client(device)
@@ -92,6 +103,12 @@ class App():
 
 	def _save_client(self, hostname, client):
 		self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
+
+	def _get_clients(self):
+		return jsondec.decode(self.redis.get("iotled-clients"))
+
+	def _save_clients(self, clients):
+		self.redis.set("iotled-clients", jsonenc.encode(clients))
 
 	def render_template(self, template_name, **context):
 		t = self.jinja_env.get_template(template_name)
