@@ -24,9 +24,9 @@
 				</div>
 				<div id="navbar" class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="/">Home</a></li>
-						<li><a href="/setup">Setup</a></li>
-						<li><a href="/manage">Manage</a></li>
+						<li id="nav-home"><a href="/">Home</a></li>
+						<li id="nav-setup"><a href="/setup">Setup</a></li>
+						<li id="nav-manage"><a href="/manage">Manage</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<li><a href="https://github.com/YtvwlD/iotled">GitHub</a></li>
@@ -36,6 +36,6 @@
 		</nav>
 
 		{% block content %}{% endblock %}
-
+		<script src="/static/js/app.js"></script>
 	</body>
 </html>
