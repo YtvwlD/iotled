@@ -19,7 +19,7 @@ function listDevices()
 					dataType: "json",
 					success: function(json)
 					{
-						var = ledField = $("<ul></ul>");
+						var ledField = $("<ul></ul>");
 						json.forEach(function(led)
 						{
 							ledField.appendTo(
