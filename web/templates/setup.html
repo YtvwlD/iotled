@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Setup{% endblock %}
+
+{% block content %}
+<div class="container theme-showcase" role="main">
+	<div class="jumbotron">
+		<h1>IoT for LEDs</h1>
+		<p>You want to connect your own Rapsberry Pi to the cloud?</p>
+		<p>Here you go!</p>
+	</div>
+	<ol>
+		<li>Install the packages python-requests and git.</li>
+		<li>Clone the repository https://github.com/YtvwlD/iotled.git.</li>
+		<li>Change into the subdirectory pi.</li>
+		<li>Run "sudo make install".</li>
+		<li>Connect the wires accordingly.</li>
+		<li>Enjoy!</li>
+		<li>When you're done, press the button to shut down.</li>
+	</ol>
+	<script>var page = "setup";</script>
+{% endblock %}

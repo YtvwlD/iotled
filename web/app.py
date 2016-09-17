@@ -55,6 +55,9 @@ class App():
 	def on_home(self, request):
 		return self.render_template('home.html')
 
+	def on_setup(self, request):
+		return self.render_template('setup.html')
+
 	def on_manage(self, request):
 		return self.render_template('manage.html')
 
