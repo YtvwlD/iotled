@@ -5,6 +5,7 @@ After=network.target
 [Service]
 Type=simple
 ExecStart=/usr/lib/iotled/daemon.py
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
