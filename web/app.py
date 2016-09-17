@@ -66,9 +66,12 @@ class App():
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
 		self._save_client(hostname, client)
 		clients = self._get_clients()
-		clients.append(hostname)
-		self._save_clients(clients)
-		return Response(status=201)
+		if hostname not in clients:
+			clients.append(hostname)
+			self._save_clients(clients)
+			return Response(status=201)
+		else:
+			return Response(status=100)
 
 	def on_api_raspi_poll(self, request, hostname):
 		clients = self._get_clients()
