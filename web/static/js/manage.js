@@ -55,7 +55,7 @@ function listDevices()
 								.html(device)
 							)
 							.append($("<td></td>")
-								.html(ledField)
+								.appendTo(ledField)
 							)
 							.appendTo("#devices-list");
 					},
