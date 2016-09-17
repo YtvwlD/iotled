@@ -71,6 +71,9 @@ class App():
 		return Response(status=201)
 
 	def on_api_raspi_poll(self, request, hostname):
+		clients = self._get_clients()
+		if hostname not in clients:
+			return Response(status=404)
 		try:
 			client = self._get_client(hostname)
 			try:
