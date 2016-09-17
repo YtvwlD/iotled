@@ -2,6 +2,8 @@ package de.ytvwld.iotled;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.LinearLayoutManager;
 
 import retrofit2.Retrofit;
 import retrofit2.Callback;
@@ -20,6 +22,12 @@ public class main extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
+        recList.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recList.setLayoutManager(llm);
 
         Retrofit retrofit = new Retrofit.Builder()
           .baseUrl("https://iotled.ytvwld.de/api/app/")
