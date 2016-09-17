@@ -2,8 +2,9 @@ package de.ytvwld.iotled;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.LinearLayoutManager;
+import android.widget.ListView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 
 import retrofit2.Retrofit;
 import retrofit2.Callback;
@@ -15,6 +16,7 @@ import java.util.List;
 public class main extends Activity
 {
     API api;
+    ListView deviceList;
 
     /** Called when the activity is first created. */
     @Override
@@ -22,12 +24,7 @@ public class main extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
-        RecyclerView recList = (RecyclerView) findViewById(R.id.cardList);
-        recList.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        recList.setLayoutManager(llm);
+        deviceList = (ListView)findViewById(R.id.deviceList);
 
         Retrofit retrofit = new Retrofit.Builder()
           .baseUrl("https://iotled.ytvwld.de/api/app/")
@@ -45,10 +42,13 @@ public class main extends Activity
           @Override
           public void onResponse(Call<List<String>> call, Response<List<String>> resp)
           {
-            for(String device: resp.body())
+            List<String> devices = resp.body();
+            for(String device: devices)
             {
               System.out.println(device);
             }
+            ListAdapter adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, devices);
+            deviceList.setAdapter(adapter);
           }
 
           @Override
