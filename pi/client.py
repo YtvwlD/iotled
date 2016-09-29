@@ -25,13 +25,13 @@ class Client():
 	def connect(self, leds):
 		self.hostname = node()
 		self.leds = leds
-		requests.post("https://iotled.ytvwld.de/api/raspi/subscribe", data={
+		requests.post("https://iotled.ytvwld.de/api/device/subscribe", data={
 			"hostname": self.hostname,
 			"leds": jsonenc.encode(leds)
 		})
 
 	def poll(self):
-		req = requests.get("https://iotled.ytvwld.de/api/raspi/poll/{}".format(self.hostname))
+		req = requests.get("https://iotled.ytvwld.de/api/device/poll/{}".format(self.hostname))
 		if req.status_code == 404:
 			raise ConnectionLost
 		if req.status_code == 204:

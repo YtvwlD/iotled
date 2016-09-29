@@ -32,8 +32,8 @@ class App():
 			Rule("/", endpoint="home"),
 			Rule("/setup", endpoint="setup"),
 			Rule("/manage", endpoint="manage"),
-			Rule("/api/raspi/subscribe", endpoint="api_raspi_subscribe"),
-			Rule("/api/raspi/poll/<hostname>", endpoint="api_raspi_poll"),
+			Rule("/api/device/subscribe", endpoint="api_device_subscribe"),
+			Rule("/api/device/poll/<hostname>", endpoint="api_device_poll"),
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
@@ -61,7 +61,7 @@ class App():
 	def on_manage(self, request):
 		return self.render_template('manage.html')
 
-	def on_api_raspi_subscribe(self, request):
+	def on_api_device_subscribe(self, request):
 		assert request.method == "POST"
 		hostname = request.form["hostname"]
 		leds = jsondec.decode(request.form["leds"])
@@ -76,7 +76,7 @@ class App():
 		else:
 			return Response(status=100)
 
-	def on_api_raspi_poll(self, request, hostname):
+	def on_api_device_poll(self, request, hostname):
 		clients = self._get_clients()
 		if hostname not in clients:
 			return Response(status=404)
