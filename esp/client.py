@@ -22,13 +22,13 @@ class Client():
 	def connect(self, leds):
 		self.hostname = node()
 		self.leds = leds
-		uhttp.post("https://iotled.ytvwld.de/api/device/subscribe", json={
+		uhttp.post("http://iotled.ytvwld.de/api/device/subscribe", json={
 			"hostname": self.hostname,
 			"leds": ujson.dumps(leds)
 		})
 
 	def poll(self):
-		req = uhttp.get("https://iotled.ytvwld.de/api/device/poll/{}".format(self.hostname))
+		req = uhttp.get("http://iotled.ytvwld.de/api/device/poll/{}".format(self.hostname))
 		if req.status_code == 404:
 			raise ConnectionLost
 		if req.status_code == 204:
