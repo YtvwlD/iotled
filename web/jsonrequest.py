@@ -14,29 +14,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import uhttp
-from platform import node
+from werkzeug.utils import cached_property
+from werkzeug.wrappers import Request
+from json import JSONDecoder
 
-class Client():
-	def connect(self, leds):
-		self.hostname = node()
-		self.leds = leds
-		uhttp.post("http://iotled.ytvwld.de/api/device/subscribe", json={
-			"hostname": self.hostname,
-			"leds": leds
-		})
+jsondec = JSONDecoder()
 
-	def poll(self):
-		req = uhttp.get("http://iotled.ytvwld.de/api/device/poll/{}".format(self.hostname))
-		if req.status_code == 404:
-			raise ConnectionLost
-		if req.status_code == 204:
-			return
-		assert req.status_code == 200
-		dec = req.json()
-		command = dec["command"]
-		params = dec["params"]
-		return command, params
+class JSONRequest(Request):
+	# accept up to 4MB of transmitted data.
+	max_content_length = 1024 * 1024 * 4
 
-class ConnectionLost(Exception):
-	pass
+	@cached_property
+	def json(self):
+		if self.headers.get('content-type') == 'application/json':
+			return jsondec.decode(self.data)

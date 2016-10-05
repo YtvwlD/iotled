@@ -25,9 +25,9 @@ class Client():
 	def connect(self, leds):
 		self.hostname = node()
 		self.leds = leds
-		requests.post("https://iotled.ytvwld.de/api/device/subscribe", data={
+		requests.post("https://iotled.ytvwld.de/api/device/subscribe", json={
 			"hostname": self.hostname,
-			"leds": jsonenc.encode(leds)
+			"leds": leds
 		})
 
 	def poll(self):

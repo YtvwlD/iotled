@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from werkzeug.wrappers import Request, Response
+from werkzeug.wrappers import Response
 from werkzeug.routing import Map, Rule
 from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.utils import redirect
@@ -22,6 +22,7 @@ from jinja2 import Environment, FileSystemLoader
 import os
 import redis
 from json import JSONDecoder, JSONEncoder
+from jsonrequest import JSONRequest
 
 jsondec = JSONDecoder()
 jsonenc = JSONEncoder()
@@ -43,7 +44,7 @@ class App():
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
 
-	@Request.application
+	@JSONRequest.application
 	def dispatch_request(self, request):
 		adapter = self.url_map.bind_to_environ(request.environ)
 		try:
@@ -63,8 +64,9 @@ class App():
 
 	def on_api_device_subscribe(self, request):
 		assert request.method == "POST"
-		hostname = request.form["hostname"]
-		leds = jsondec.decode(request.form["leds"])
+		data = request.json()
+		hostname = data["hostname"]
+		leds = data["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
 		self._save_client(hostname, client)
