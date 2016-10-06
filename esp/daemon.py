@@ -25,6 +25,7 @@ from time import sleep
 
 from gpio import GPIO
 from client import Client, ConnectionLost
+import gc
 
 print ("Preparing GPIO...")
 gpio = GPIO()
@@ -44,6 +45,7 @@ while True:
 					gpio.turn_on(cmd_param[1][0])
 				if cmd_param[0] == "turn_off":
 					gpio.turn_off(cmd_param[1][0])
+			gc.collect()
 
 	except ConnectionLost:
 		print ("Connection lost.")
