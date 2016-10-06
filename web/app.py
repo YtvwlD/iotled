@@ -64,7 +64,7 @@ class App():
 
 	def on_api_device_subscribe(self, request):
 		assert request.method == "POST"
-		data = request.json()
+		data = request.json
 		hostname = data["hostname"]
 		leds = data["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
