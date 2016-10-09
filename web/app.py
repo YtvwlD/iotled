@@ -20,9 +20,9 @@ from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.utils import redirect
 from jinja2 import Environment, FileSystemLoader
 import os
-import redis
 from json import JSONDecoder, JSONEncoder
 from jsonrequest import JSONRequest
+from threading import Lock
 
 jsondec = JSONDecoder()
 jsonenc = JSONEncoder()
@@ -38,8 +38,8 @@ class App():
 			Rule("/api/app/list", endpoint="api_app_list"),
 			Rule("/api/app/<device>", endpoint="api_app_manage")
 		])
-		self.redis = redis.Redis(unix_socket_path="/home/ytvwld/.redis/sock", password=os.environ["REDIS_AUTH"])
-		self._save_clients([])
+		self.clients = {}
+		self.clients_lock = Lock()
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
@@ -69,58 +69,46 @@ class App():
 		leds = data["leds"]
 		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
 		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
-		self._save_client(hostname, client)
-		clients = self._get_clients()
-		if hostname not in clients:
-			clients.append(hostname)
-			self._save_clients(clients)
-			return Response(status=201)
-		else:
-			return Response(status=100)
+		with self.clients_lock:
+			if hostname not in self.clients:
+				self.clients[hostname] = client
+				return Response(status=201)
+			else:
+				return Response(status=100)
 
 	def on_api_device_poll(self, request, hostname):
-		clients = self._get_clients()
-		if hostname not in clients:
+		self.clients_lock.acquire()
+		if hostname not in self.clients:
+			self.clients_lock.release()
 			return Response(status=404)
 		try:
-			client = self._get_client(hostname)
+			client = self.clients[hostname]
 			try:
 				command = client["commands"].pop(0)
-				self._save_client(hostname, client)
+				self.clients_lock.release()
 				print("Sending command {0} to client {1}...".format(command, hostname))
 				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
 			except IndexError:
+				self.clients_lock.release()
 				return Response(status=204)
 		except TypeError:
+			self.client_lock.release()
 			return Response(status=404)
 
 	def on_api_app_list(self, request):
-		clients = self._get_clients()
-		return Response(jsonenc.encode(clients), mimetype="text/json")
+		with self.clients_lock:
+			return Response(jsonenc.encode(list(self.clients)), mimetype="text/json")
 
 	def on_api_app_manage(self, request, device):
-		client = self._get_client(device)
-		if request.method == "GET":
-			return Response(jsonenc.encode(client["leds"]), mimetype="text/json")
-		if request.method == "POST":
-			command = request.form["command"]
-			params = jsondec.decode(request.form["params"])
-			client["commands"].append({"command": command, "params": params})
-			self._save_client(device, client)
-			return Response(status=202)
-
-	def _get_client(self, hostname):
-		return jsondec.decode(self.redis.get("iotled-client: " + hostname))
-
-	def _save_client(self, hostname, client):
-		print("Saving client: {0} {1}".format(hostname, client))
-		self.redis.set("iotled-client: " + hostname, jsonenc.encode(client))
-
-	def _get_clients(self):
-		return jsondec.decode(self.redis.get("iotled-clients"))
-
-	def _save_clients(self, clients):
-		self.redis.set("iotled-clients", jsonenc.encode(clients))
+		with self.clients_lock:
+			client = self.clients[device]
+			if request.method == "GET":
+				return Response(jsonenc.encode(client["leds"]), mimetype="text/json")
+			if request.method == "POST":
+				command = request.form["command"]
+				params = jsondec.decode(request.form["params"])
+				client["commands"].append({"command": command, "params": params})
+				return Response(status=202)
 
 	def render_template(self, template_name, **context):
 		t = self.jinja_env.get_template(template_name)

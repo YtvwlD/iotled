@@ -28,4 +28,4 @@ app = SharedDataMiddleware(app.wsgi_app, {
 })
 
 if __name__ == "__main__":
-	run_simple('0.0.0.0', 5000, app, use_debugger=True, use_reloader=True)
+	run_simple('0.0.0.0', 5000, app, use_debugger=True, use_reloader=True, threaded=True)
