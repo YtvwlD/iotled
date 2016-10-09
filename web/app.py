@@ -82,19 +82,14 @@ class App():
 		if hostname not in self.clients:
 			self.clients_lock.release()
 			return Response(status=404)
-		try:
-			client = self.clients[hostname]
-			while not client["commands"]:
-				print ("Got nothing new for {0}. Waiting.".format(hostname))
-				self.commands_condition.wait()
-			command = client["commands"].pop(0)
-			self.clients_lock.release()
-			print("Sending command {0} to client {1}...".format(command, hostname))
-			return Response(jsonenc.encode(command), mimetype="text/json", status=200)
-		except TypeError:
-			self.clients_lock.release()
-			print ("Couldn't find {0}.".format(hostname))
-			return Response(status=404)
+		client = self.clients[hostname]
+		while not client["commands"]:
+			print ("Got nothing new for {0}. Waiting.".format(hostname))
+			self.commands_condition.wait()
+		command = client["commands"].pop(0)
+		self.clients_lock.release()
+		print("Sending command {0} to client {1}...".format(command, hostname))
+		return Response(jsonenc.encode(command), mimetype="text/json", status=200)
 
 	def on_api_app_list(self, request):
 		with self.clients_lock:
