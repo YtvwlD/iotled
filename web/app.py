@@ -90,9 +90,11 @@ class App():
 				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
 			except IndexError:
 				self.clients_lock.release()
+				print ("Got nothing new for {}.".format(hostname))
 				return Response(status=204)
 		except TypeError:
 			self.clients_lock.release()
+			print ("Couldn't find {}.".format(hostname))
 			return Response(status=404)
 
 	def on_api_app_list(self, request):
@@ -108,6 +110,7 @@ class App():
 				command = request.form["command"]
 				params = jsondec.decode(request.form["params"])
 				client["commands"].append({"command": command, "params": params})
+				print("Got the command {} {} for {}.".format(command, params, device))
 				return Response(status=202)
 
 	def render_template(self, template_name, **context):
