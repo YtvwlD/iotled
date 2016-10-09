@@ -92,7 +92,7 @@ class App():
 				self.clients_lock.release()
 				return Response(status=204)
 		except TypeError:
-			self.client_lock.release()
+			self.clients_lock.release()
 			return Response(status=404)
 
 	def on_api_app_list(self, request):
