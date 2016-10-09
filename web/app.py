@@ -22,7 +22,7 @@ from jinja2 import Environment, FileSystemLoader
 import os
 from json import JSONDecoder, JSONEncoder
 from jsonrequest import JSONRequest
-from threading import Lock
+from threading import Lock, Condition
 
 jsondec = JSONDecoder()
 jsonenc = JSONEncoder()
@@ -40,6 +40,7 @@ class App():
 		])
 		self.clients = {}
 		self.clients_lock = Lock()
+		self.commands_condition = Condition(self.clients_lock)
 		template_path = os.path.join(os.path.dirname(__file__), 'templates')
 		self.jinja_env = Environment(loader=FileSystemLoader(template_path),
 			autoescape=True)
@@ -83,15 +84,17 @@ class App():
 			return Response(status=404)
 		try:
 			client = self.clients[hostname]
-			try:
-				command = client["commands"].pop(0)
-				self.clients_lock.release()
-				print("Sending command {0} to client {1}...".format(command, hostname))
-				return Response(jsonenc.encode(command), mimetype="text/json", status=200)
-			except IndexError:
-				self.clients_lock.release()
-				print ("Got nothing new for {}.".format(hostname))
-				return Response(status=204)
+			while not client["commands"]:
+				print ("Got nothing new for {}. Waiting.".format(hostname))
+				self.commands_condition.wait()
+			command = client["commands"].pop(0)
+			self.clients_lock.release()
+			print("Sending command {0} to client {1}...".format(command, hostname))
+			return Response(jsonenc.encode(command), mimetype="text/json", status=200)
+				#except IndexError: #This shouldn't happen. (timeout?)
+				#	self.clients_lock.release()
+				#	print ("Got nothing new for {}.".format(hostname))
+				#	return Response(status=204)
 		except TypeError:
 			self.clients_lock.release()
 			print ("Couldn't find {}.".format(hostname))
@@ -111,6 +114,7 @@ class App():
 				params = jsondec.decode(request.form["params"])
 				client["commands"].append({"command": command, "params": params})
 				print("Got the command {} {} for {}.".format(command, params, device))
+				self.commands_condition.notify_all()
 				return Response(status=202)
 
 	def render_template(self, template_name, **context):
