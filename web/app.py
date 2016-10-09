@@ -85,7 +85,7 @@ class App():
 		try:
 			client = self.clients[hostname]
 			while not client["commands"]:
-				print ("Got nothing new for {}. Waiting.".format(hostname))
+				print ("Got nothing new for {0}. Waiting.".format(hostname))
 				self.commands_condition.wait()
 			command = client["commands"].pop(0)
 			self.clients_lock.release()
@@ -97,7 +97,7 @@ class App():
 				#	return Response(status=204)
 		except TypeError:
 			self.clients_lock.release()
-			print ("Couldn't find {}.".format(hostname))
+			print ("Couldn't find {0}.".format(hostname))
 			return Response(status=404)
 
 	def on_api_app_list(self, request):
@@ -113,7 +113,7 @@ class App():
 				command = request.form["command"]
 				params = jsondec.decode(request.form["params"])
 				client["commands"].append({"command": command, "params": params})
-				print("Got the command {} {} for {}.".format(command, params, device))
+				print("Got the command {0} {1} for {2}.".format(command, params, device))
 				self.commands_condition.notify_all()
 				return Response(status=202)
 
