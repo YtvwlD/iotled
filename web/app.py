@@ -91,10 +91,6 @@ class App():
 			self.clients_lock.release()
 			print("Sending command {0} to client {1}...".format(command, hostname))
 			return Response(jsonenc.encode(command), mimetype="text/json", status=200)
-				#except IndexError: #This shouldn't happen. (timeout?)
-				#	self.clients_lock.release()
-				#	print ("Got nothing new for {}.".format(hostname))
-				#	return Response(status=204)
 		except TypeError:
 			self.clients_lock.release()
 			print ("Couldn't find {0}.".format(hostname))
