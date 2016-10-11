@@ -36,7 +36,9 @@ class Client():
 			raise ConnectionLost
 		if req.status_code == 204:
 			return
-		assert req.status_code == 200
+		if req.status_code != 200:
+			print ("Error:", req.status_code)
+			return
 		txt = req.text
 		dec = jsondec.decode(req.text)
 		command = dec["command"]
