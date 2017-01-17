@@ -24,16 +24,19 @@ class Client():
 		uhttp.post("http://iotled.ytvwld.de/api/device/subscribe", json={
 			"hostname": self.hostname,
 			"leds": leds
-		})
+		}).close()
 
 	def poll(self):
 		req = uhttp.get("http://iotled.ytvwld.de/api/device/poll/{}".format(self.hostname))
 		if req.status_code == 404:
+			req.close()
 			raise ConnectionLost
 		if req.status_code == 204:
+			req.close()
 			return
 		if req.status_code != 200:
 			print ("Error:", req.status_code)
+			req.close()
 			return
 		dec = req.json()
 		command = dec["command"]
