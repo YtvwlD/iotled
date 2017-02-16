@@ -14,5 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def node():
-	return "micropython"
+print ("Connecting to WiFi...")
+from config import WIFI_SSID, WIFI_PASS
+from network import WLAN, STA_IF
+s = WLAN(STA_IF)
+s.active(True)
+s.connect(WIFI_SSID, WIFI_PASS)
+while not s.isconnected():
+	pass
+print ("Connected.")

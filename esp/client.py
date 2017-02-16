@@ -15,11 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uhttp
-from platform import node
+from config import HOSTNAME
 
 class Client():
 	def connect(self, leds):
-		self.hostname = node()
+		self.hostname = HOSTNAME
 		self.leds = leds
 		uhttp.post("http://iotled.ytvwld.de/api/device/subscribe", json={
 			"hostname": self.hostname,

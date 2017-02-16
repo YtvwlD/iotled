@@ -1,0 +1,3 @@
+HOSTNAME = "micropython"
+WIFI_SSID = "myWiFi"
+WIFI_PASS = "secret"
