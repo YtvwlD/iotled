@@ -21,10 +21,10 @@ PORTS = {
 		"BLUE": 3,
 		"GREEN": 4,
 		"RED": 14,
-		"YELLOW": 17
+		"YELLOW": 15
 	},
 	"BUTTON": {
-		"POWER": 15
+		"POWER": 17
 	}
 }
 
