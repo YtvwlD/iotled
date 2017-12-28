@@ -67,9 +67,10 @@ class App():
 		assert request.method == "POST"
 		data = request.json
 		hostname = data["hostname"]
+		ip = request.access_route[-1]
 		leds = data["leds"]
-		print ("Client {0} with LEDs {1} has subscribed.".format(hostname, leds))
-		client = {"leds": leds, "commands": [{"command": "hello", "params": []}]}
+		print ("Client {0} ({1}) with LEDs {2} has subscribed.".format(hostname, ip, leds))
+		client = {"ip": ip, "leds": leds, "commands": [{"command": "hello", "params": []}]}
 		with self.clients_lock:
 			if hostname not in self.clients:
 				self.clients[hostname] = client
