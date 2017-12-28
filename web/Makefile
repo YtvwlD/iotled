@@ -1,0 +1,12 @@
+install:
+	mkdir -p /usr/lib/iotled
+	cp * /usr/lib/iotled
+	cp iotled.service /lib/systemd/system/
+	systemctl daemon-reload
+	systemctl enable iotled.service
+	systemctl start iotled.service
+
+uninstall:
+	rm -rf /usr/lib/iotled
+	rm /lib/systemd/system/iotled.service
+	rm /lib/systemd/system/multi-user.target.wants/iotled.service

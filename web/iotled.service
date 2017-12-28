@@ -1,0 +1,11 @@
+[Unit]
+Description=IoT for LEDs (server)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/iotled/start.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
