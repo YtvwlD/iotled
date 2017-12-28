@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+User=nobody
 ExecStart=/usr/lib/iotled/start.py
 Restart=always
 
