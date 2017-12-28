@@ -1,6 +1,6 @@
 install:
 	mkdir -p /usr/lib/iotled
-	cp * /usr/lib/iotled
+	cp -r * /usr/lib/iotled
 	cp iotled.service /lib/systemd/system/
 	systemctl daemon-reload
 	systemctl enable iotled.service
