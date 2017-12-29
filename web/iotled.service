@@ -5,6 +5,7 @@ After=network.target
 [Service]
 Type=simple
 User=nobody
+Environment="PYTHONUNBUFFERED=true"
 ExecStart=/usr/lib/iotled/start.py
 Restart=always
 
